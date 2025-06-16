@@ -68,7 +68,7 @@ export const getTasks = async (req,res) =>{
           })
           
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
@@ -85,7 +85,7 @@ export const getTaskById = async (req,res) =>{
           return res.status(200).json(task);
           
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
@@ -111,7 +111,7 @@ export const createTask = async (req,res) =>{
           return res.status(201).json({message:"Task created successfully",task});
           
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
@@ -141,34 +141,102 @@ export const updateTask = async (req,res) =>{
 
 
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
 
 export const deleteTask = async (req,res) =>{
      try {
+          const task = await Task.findById(req.params.id);
+
+          if(!task)
+                return res.status(404).json({message:"Task not found"});
+         
+          await task.deleteOne();
+          return res.status(200).json({message:"Task deleted successfully"});
           
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
 
-export const updateTaskStatus = async (req,res) =>{
-     try {
-          
-     } catch (error) {
-          return res.status(500).json({message:"Server error",error})
-     }
-}
+export const updateTaskStatus = async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+
+        if (!task) {
+            return res.status(404).json({ message: "Task not found" });
+        }
+
+        const isAssigned = task.assignedTo.some(
+            (userId) => userId.toString() === req.user._id.toString()
+        );
+
+        if (!isAssigned && req.user.role !== "admin") {
+            return res.status(403).json({ message: "Not authorized" });
+        }
+
+        task.status = req.body.status || task.status;
+
+        if (task.status === "Completed") {
+            task.todoCheckList.forEach((item) => {
+                item.completed = true;
+            });
+            task.progress = 100;
+        }
+
+        await task.save();
+        console.log("Task after saving:", task);
+
+        const updatedTask = await Task.findById(req.params.id);
+
+        return res.status(200).json({ message: "Task status updated successfully", task: updatedTask });
+
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
 
 
 export  const updateTaskCheckList = async (req,res) =>{
      try {
+          const {todoCheckList} = req.body;
+
+          const task = await Task.findById(req.params.id);
+
+          if(!task){
+               return res.status(404).json({message:"Task not found"})
+          }
+
+          if( !task.assignedTo.includes(req.user._id) && req.user.role !== "admin"  ){
+               return res.status(403).json({message:"Not Authorized to update checkList"})
+          }
+          task.todoCheckList = todoCheckList;
+
+          const completedCount = task.todoCheckList.filter((item) => item.completed).length
+          const totalItems = task.todoCheckList.length;
+
+          task.progress = totalItems > 0 ? Math.round((completedCount/totalItems)*100) : 0
+          if(task.progress === 100){
+               task.status = "Completed";
+          }else if(task.progress >0){
+               task.status = "In Progress";
+          }else{
+               task.status = "Pending";
+          }
+          await task.save();
+
+          const updatedTask = await Task.findById(req.params.id).populate(
+               "assignedTo",
+               "name email profileImageUrl"
+          );
+
+          return res.status(201).json({message:"Task Checlist updated ",task:updatedTask})
           
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
@@ -177,7 +245,7 @@ export const getDashboardData = async (req,res) =>{
      try {
           
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
@@ -187,7 +255,7 @@ export const getUserDashboardData = async (req,res) =>{
      try {
           
      } catch (error) {
-          return res.status(500).json({message:"Server error",error})
+          return res.status(500).json({message:"Server error",error:error.message})
      }
 }
 
