@@ -1,7 +1,6 @@
 import express from "express";
-import { adminOnly, protect } from "../middlewares/authMiddleware";
-import { exportTaskReport, exportUsersReport } from "../controllers/reportController";
-
+import { exportTaskReport, exportUsersReport } from "../controllers/reportController.js";
+import {adminOnly,protect} from '../middlewares/authMiddleware.js'
 
 const router = express.Router();
 

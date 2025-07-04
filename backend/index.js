@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/authRoutes.js'
@@ -26,7 +27,7 @@ app.use("/api/auth",authRoutes);
 app.use("/api/users",userRoutes);
 app.use("/api/tasks",taskRoutes);
 app.use("/api/reports",reportRoutes);
-
+app.use("/uploads", express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), "uploads")));
 
 
 const PORT = process.env.PORT || 5000;

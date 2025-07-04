@@ -1,31 +1,46 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../../components/inputs/Inputs.jsx";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { Link } from "react-router-dom";
 import { validateEmail } from "../../utils/helper.js";
+import axiosInstance from "../../utils/axiosInstance.js";
+import { API_PATHS } from "../../utils/apiPaths.js";
+import { UserContext } from "../../context/UseContext.jsx";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+
+   const {updateUser} = useContext(UserContext)
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    if(!validateEmail(email)){
-      setError("Please enter a valid email address");
-      return;
-    }
-    if(!password){
-      setError("Please enter the password");
-      return;
-    }
+  if (!validateEmail(email)) return setError("Invalid email");
+  if (!password) return setError("Enter password");
 
-    setError("");
+  try {
+    const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+      email,
+      password,
+    });
 
-  };
+    const { token, user } = response.data;
+    updateUser({ token, ...user });
+
+    // ❌ remove manual navigate
+    // Let <Root /> handle redirect
+  } catch (error) {
+    setError(
+      error.response?.data?.message || "Something went wrong. Try again."
+    );
+  }
+};
+
 
   return (
     <AuthLayout>
