@@ -1,14 +1,13 @@
 import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/inputs/Inputs.jsx";
 import ProfilePhotoSelector from "../../components/inputs/ProfilePhotoSelector.jsx";
 import AuthLayout from "../../components/layouts/AuthLayout.jsx";
-import { validateEmail } from "../../utils/helper";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance.js";
-import { API_PATHS } from "../../utils/apiPaths.js";
 import { UserContext } from "../../context/UseContext.jsx";
+import { API_PATHS } from "../../utils/apiPaths.js";
+import axiosInstance from "../../utils/axiosInstance.js";
+import { validateEmail } from "../../utils/helper";
 import uploadImage from "../../utils/uploadImage.js";
-
 
 function SignUp() {
   const [profilePic, setProfilePic] = useState(null);
@@ -19,133 +18,135 @@ function SignUp() {
 
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const {updateUser} = useContext(UserContext)
-  const handleSignup = async (e) => {
-    e.preventDefault();
+  const { updateUser } = useContext(UserContext);
+const handleSignup = async (e) => {
+  e.preventDefault();
 
-let profileImageUrl = ''
+  let profileImageUrl = "";
 
- if (!fullName) {
-  setError("Please enter full name.");
-  return;
-}
+  if (!fullName) {
+    setError("Please enter full name.");
+    return;
+  }
 
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address");
-      return;
+  if (!validateEmail(email)) {
+    setError("Please enter a valid email address");
+    return;
+  }
+  if (!password) {
+    setError("Please enter the password");
+    return;
+  }
+
+  setError("");
+
+  try {
+    if (profilePic && profilePic instanceof File) {
+      const imgUploadRes = await uploadImage(profilePic);
+      profileImageUrl = imgUploadRes.imageUrl || "";
     }
-    if (!password) {
-      setError("Please enter the password");
-      return;
-    }
 
-    setError("");
-
-   try {
-
- if (profilePic && profilePic instanceof File) {
-  const imgUploadRes = await uploadImage(profilePic);
-  profileImageUrl = imgUploadRes.imageUrl || "";
-}
-
- 
-
-    const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER,{
+    const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
       name: fullName,
       email,
       password,
       profileImageUrl,
-      adminInviteToken
+      adminInviteToken,
     });
 
-    const {token,role} = response.data;
+    const userData = response.data; 
 
-    if(token){
-      localStorage.setItem("token",token);
-      updateUser(response.data);
+    if (userData.token) {
+      localStorage.setItem("token", userData.token);
+      updateUser(userData);
 
-      if(role === "admin"){
+      if (userData.role === "admin") {
         navigate("/admin/dashboard");
-      }else{
+      } else if (userData.role === "member") {
         navigate("/user/dashboard");
+      } else {
+        navigate("/login");
       }
     }
-        
-    } catch (error) {
-      if(error.response && error.response.data.message){
-        setError(error.response.data.message);
-      }else{
-        setError("Something went wrong.Please try again.")
-      }
+  } catch (error) {
+    if (error.response && error.response.data.message) {
+      setError(error.response.data.message);
+    } else {
+      setError("Something went wrong. Please try again.");
     }
+  }
+};
 
-  };
 
   return (
     <AuthLayout>
       <div className="lg:w-[100%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center  ">
-        <h3 className="text-xl font-semibold text-black mt-16">Create an Account </h3>
+        <h3 className="text-xl font-semibold text-black mt-16">
+          Create an Account{" "}
+        </h3>
         <p className="text-xs text-slate-700 mt-[5px] mb-6">
           Join us today by entering your details below.
         </p>
 
-<form onSubmit={handleSignup} className="space-y-2 mb-20">
-  <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
+        <form onSubmit={handleSignup} className="space-y-2 mb-20">
+          <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-    <div>
-      <Input
-        value={fullName}
-        onChange={(e) => setFullName(e.target.value)}
-        label="Full Name"
-        placeholder="John"
-        type="text"
-        className="w-full"
-      />
-    </div>
-    <div>
-      <Input
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        label="Email Address"
-        placeholder="john@example.com"
-        type="text"
-        className="w-full"
-      />
-    </div>
-    <div>
-      <Input
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        label="Password"
-        placeholder="Min 8 Characters"
-        type="password"
-        className="w-full"
-      />
-    </div>
-    <div>
-      <Input
-        value={adminInviteToken}
-        onChange={(e) => setAdminInviteToken(e.target.value)}
-        label="Admin Invite Token"
-        placeholder="6 Digit Code"
-        type="text"
-        className="w-full"
-      />
-    </div>
-  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+            <div>
+              <Input
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                label="Full Name"
+                placeholder="John"
+                type="text"
+                className="w-full"
+              />
+            </div>
+            <div>
+              <Input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                label="Email Address"
+                placeholder="john@example.com"
+                type="text"
+                className="w-full"
+              />
+            </div>
+            <div>
+              <Input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                label="Password"
+                placeholder="Min 8 Characters"
+                type="password"
+                className="w-full"
+              />
+            </div>
+            <div>
+              <Input
+                value={adminInviteToken}
+                onChange={(e) => setAdminInviteToken(e.target.value)}
+                label="Admin Invite Token"
+                placeholder="6 Digit Code"
+                type="text"
+                className="w-full"
+              />
+            </div>
+          </div>
 
-  {error && <p className="text-red-500 text-xs">{error}</p>}
+          {error && <p className="text-red-500 text-xs">{error}</p>}
 
-  <button type="submit" className="btn-primary w-full mt-4">SIGN UP</button>
+          <button type="submit" className="btn-primary w-full mt-4">
+            SIGN UP
+          </button>
 
-  <p className="text-[13px] text-slate-800 mt-3">
-    Already have an account?{" "}
-    <Link className="font-medium text-primary underline" to="/login">
-      Login
-    </Link>
-  </p>
-</form>
+          <p className="text-[13px] text-slate-800 mt-3">
+            Already have an account?{" "}
+            <Link className="font-medium text-primary underline" to="/login">
+              Login
+            </Link>
+          </p>
+        </form>
       </div>
     </AuthLayout>
   );

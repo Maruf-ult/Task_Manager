@@ -7,16 +7,15 @@ import { validateEmail } from "../../utils/helper.js";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
 import { UserContext } from "../../context/UseContext.jsx";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
-
-   const {updateUser} = useContext(UserContext)
+  const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  
 const handleLogin = async (e) => {
   e.preventDefault();
 
@@ -29,18 +28,25 @@ const handleLogin = async (e) => {
       password,
     });
 
-    const { token, user } = response.data;
-    updateUser({ token, ...user });
+    console.log("Login response:", response.data);
 
-    // ❌ remove manual navigate
-    // Let <Root /> handle redirect
+    const userData = response.data;
+    updateUser(userData);
+
+    if (userData.role === "admin") {
+      navigate("/admin/dashboard");
+    } else if (userData.role === "member") {
+      navigate("/user/dashboard");
+    } else {
+      navigate("/login");
+    }
   } catch (error) {
+    console.error("Login error:", error);
     setError(
-      error.response?.data?.message || "Something went wrong. Try again."
+      error.response?.data?.message || error.message || "Something went wrong. Try again."
     );
   }
 };
-
 
   return (
     <AuthLayout>

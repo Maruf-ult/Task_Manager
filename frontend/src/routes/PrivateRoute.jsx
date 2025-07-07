@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-
-// Mock authentication function (Replace with actual authentication logic)
-const getUserRole = () => {
-  return localStorage.getItem("userRole"); // Example: "admin" or "user"
-};
+import { UserContext } from "../context/UseContext";
 
 function PrivateRoute({ allowedRoles }) {
-  const userRole = getUserRole();
+  const { user, loading } = useContext(UserContext);
 
-  if (!userRole || !allowedRoles.includes(userRole)) {
+  console.log("PrivateRoute user:", user, "loading:", loading);
+
+  if (loading) return null;
+
+  if (!user || !allowedRoles.includes(user.role)) {
     return <Navigate to="/login" />;
   }
 

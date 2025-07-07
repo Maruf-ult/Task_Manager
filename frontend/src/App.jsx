@@ -12,6 +12,9 @@ import PrivateRoute from "./routes/PrivateRoute";
 import UserProvider, { UserContext } from "./context/UseContext.jsx";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
+
+
+
 function App() {
   return (
     <UserProvider>
@@ -30,7 +33,7 @@ function App() {
         </Route>
 
         {/* User Routes */}
-        <Route element={<PrivateRoute allowedRoles={["user"]} />}>
+        <Route element={<PrivateRoute allowedRoles={["member"]} />}>
           <Route path="/user/dashboard" element={<UserDashboard />} />
           <Route path="/user/tasks" element={<MyTasks />} />
           <Route path="/user/tasks-details/:id" element={<ViewTaskDetails />} />
@@ -43,23 +46,24 @@ function App() {
     </UserProvider>
   );
 }
+
 const Root = () => {
   const { user, loading } = useContext(UserContext);
 
   console.log("⚡ Root render");
   console.log("➡ loading:", loading);
   console.log("➡ user:", user);
-
+   
   if (loading) return null;
+  
+  if(!user) return <Navigate to="/login" />
 
-  if (!user) return <Navigate to="/login" />;
-
+  console.log(user)
   if (user.role === "admin") return <Navigate to="/admin/dashboard" />;
   if (user.role === "member") return <Navigate to="/user/dashboard" />;
 
-  return <Navigate to="/login" />; // fallback
+  return <Navigate to="/login" />; 
 };
-
 
 
 
