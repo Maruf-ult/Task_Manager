@@ -1,17 +1,17 @@
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
+import { LuArrowRight } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import InfoCard from "../../components/Cards/InfoCard";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
+import TaskListTable from "../../components/layouts/TaskListTable";
+import CustomBarChart from "../../components/layouts/charts/CustomBarChart";
+import CustomPieChart from "../../components/layouts/charts/CustomPieChart";
 import { UserContext } from "../../context/UseContext";
 import { UseUserAuth } from "../../hooks/UseUserAuth";
 import { API_PATHS } from "../../utils/apiPaths";
 import axiosInstance from "../../utils/axiosInstance";
 import { addThousandsSeparator } from "../../utils/helper";
-import { LuArrowRight } from "react-icons/lu";
-import TaskListTable from "../../components/layouts/TaskListTable";
-import CustomPieChart from "../../components/layouts/charts/CustomPieChart";
-import CustomBarChart from "../../components/layouts/charts/CustomBarChart";
 
 function Dashboard() {
   UseUserAuth();
@@ -24,43 +24,29 @@ function Dashboard() {
   const [pieChartData, setPieChartData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
 
-  const COLORS = ["#8051FF","#00BBDB", "#7BCE00"]
+  const COLORS = ["#8051FF", "#00BBDB", "#7BCE00"];
+
+  const prepareChartData = (data) => {
   
-  const prepareChartData = (data) =>{
     const taskDistribution = data?.taskDistribution || null;
     const taskPriorityLevels = data?.taskPriorityLevels || null;
-    
+
     const taskDistributionData = [
-      {status:"Pending",count:taskDistribution?.pending || 0},
-      {status:"In Progress",count:taskDistribution?.InProgress || 0},
-      {status:"Completed",count:taskDistribution?.Completed || 0},
+      { status: "Pending", count: taskDistribution?.Pending || 0 },
+      { status: "In Progress", count: taskDistribution?.InProgress || 0 },
+      { status: "Completed", count: taskDistribution?.Completed || 0 },
     ];
 
     setPieChartData(taskDistributionData);
 
     const PriorityLevelData = [
-      {priority:"Low",count:taskPriorityLevels?.Low || 0},
-      {priority:"Medium",count:taskPriorityLevels?.Medium || 0},
-      {priority:"High",count:taskPriorityLevels?.High || 0},
-    ] 
-    setBarChartData(PriorityLevelData)
-  }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+      { priority: "Low", count: taskPriorityLevels?.Low || 0 },
+      { priority: "Medium", count: taskPriorityLevels?.Medium || 0 },
+      { priority: "High", count: taskPriorityLevels?.High || 0 },
+    ];
+    setBarChartData(PriorityLevelData);
+  };
+
   const getDashboardData = async () => {
     try {
       const response = await axiosInstance.get(
@@ -76,9 +62,9 @@ function Dashboard() {
     }
   };
 
-  const onSeeMore = ()=>{
-    navigate('/admin/tasks')
-  }
+  const onSeeMore = () => {
+    navigate("/admin/tasks");
+  };
 
   useEffect(() => {
     getDashboardData();
@@ -102,14 +88,16 @@ function Dashboard() {
           <InfoCard
             label="Total Tasks"
             value={addThousandsSeparator(
-              dashboardData?.charts?.taskDistribution?.ALl || 0
+              Object.values(
+                dashboardData?.charts?.taskDistribution || {}
+              ).reduce((sum, count) => sum + count, 0)
             )}
             color="bg-blue-500"
           />
           <InfoCard
             label="Pending Tasks"
             value={addThousandsSeparator(
-              dashboardData?.charts?.taskDistribution?.pending || 0
+              dashboardData?.charts?.taskDistribution?.Pending || 0
             )}
             color="bg-violet-500"
           />
@@ -129,60 +117,41 @@ function Dashboard() {
           />
         </div>
       </div>
-     
-     <div className="grid grid-cols-1  md:grid-cols-2 gap-6 my-4 md:my-6">
-       
-       
-       <div>
-         <div className="card">
-               <div className="flex items-center justify-between">
-                <h5 className="font-medium">Task Distribution</h5>
 
-               </div>
+      <div className="grid grid-cols-1  md:grid-cols-2 gap-6 my-4 md:my-6">
+        <div>
+          <div className="card">
+            <div className="flex items-center justify-between">
+              <h5 className="font-medium">Task Distribution</h5>
+            </div>
 
-            <CustomPieChart
-            data={pieChartData}
-            colors={COLORS}
-            />
-         </div>
-       </div>
-       
-       
-         
-       <div>
-         <div className="card">
-               <div className="flex items-center justify-between">
-                <h5 className="font-medium">Task Priority Levels</h5>
+            <CustomPieChart data={pieChartData} colors={COLORS} />
+          </div>
+        </div>
 
-               </div>
+        <div>
+          <div className="card">
+            <div className="flex items-center justify-between">
+              <h5 className="font-medium">Task Priority Levels</h5>
+            </div>
 
-            <CustomBarChart
-            data={barChartData}
-            colors={COLORS}
-            />
-         </div>
-       </div>
-       
-       
-       
-       
+            <CustomBarChart data={barChartData} colors={COLORS} />
+          </div>
+        </div>
+
         <div className="md:col-span-2">
-              <div className="card">
-                  <div className="flex items-center justify-between">
-                      <h5 className="text-lg">Recent Tasks</h5>
+          <div className="card">
+            <div className="flex items-center justify-between">
+              <h5 className="text-lg">Recent Tasks</h5>
 
-                      <button className="card-btn" onClick={onSeeMore}>
-                         See ALl <LuArrowRight className="text-base"/>
-                         </button>
-                  </div>
-                  <TaskListTable tableData={dashboardData?.recentTasks || [] } />
-              </div>
-         </div>
-
-     </div>
-
-
-
+              <button className="card-btn" onClick={onSeeMore}>
+                See ALl <LuArrowRight className="text-base" />
+              </button>
+            </div>
+            <TaskListTable tableData={dashboardData?.recentTasks || []} />
+          </div>
+        </div>
+      </div>
     </DashboardLayout>
   );
 }

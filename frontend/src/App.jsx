@@ -12,6 +12,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import UserProvider, { UserContext } from "./context/UseContext.jsx";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 
 
@@ -43,6 +44,13 @@ function App() {
 
       </Routes>
     </Router>
+    <Toaster toastOptions={{className:"",
+      style:{
+        fontSize:"13px",
+      }
+    }}>
+
+    </Toaster>
     </UserProvider>
   );
 }
