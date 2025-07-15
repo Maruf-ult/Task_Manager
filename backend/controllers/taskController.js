@@ -39,7 +39,7 @@ export const getTasks = async (req,res) =>{
 
           const pendingTasks = await Task.countDocuments({
                ...filter,
-               status:"pending",
+               status:"Pending",
                ...(req.user.role !== "admin" && {assignedTo:req.user._id}),
           });
           
