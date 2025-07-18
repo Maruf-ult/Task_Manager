@@ -4,7 +4,7 @@ import excelJS from "exceljs";
 
 export const exportTaskReport = async (req,res) =>{
      try {
-          const tasks = Task.find().populate("assignedTo","name email");
+          const tasks =await Task.find().populate("assignedTo","name email");
 
           const workbook = new excelJS.Workbook();
           const worksheet = workbook.addWorksheet("Tasks Report");
@@ -18,8 +18,8 @@ export const exportTaskReport = async (req,res) =>{
                {header:"Assigned To",key:"assignedTo",width:30},
           ];
           tasks.forEach((task)=> {
-               const assignedTo = task.assignedTo.map((user)=> `${user.name}(${user.email})`)
-               .join(", ");
+               const assignedTo = task.assignedTo?.map((user)=> `${user.name}(${user.email})`)
+               .join(", ");   
                worksheet.addRow ({
                _id: task._id,
                title: task.title,
@@ -31,19 +31,18 @@ export const exportTaskReport = async (req,res) =>{
           })
           });
 
-          res.setHeader(
-               "Content-Type",
-               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          );
+         res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="tasks_report.xlsx"'
+    );
 
-          res.setHeader(
-               "Content-Disposition",
-               'attachment; filename="tasks_report.xlsx"'
-          )
-
-          return workbook.xlsx.write(res).then(() =>{
-               res.end();
-          })
+    // ✅ Stream the workbook
+    await workbook.xlsx.write(res);
+    res.end();
 
 
 

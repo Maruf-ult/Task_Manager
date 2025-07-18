@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LuTrash2 } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,6 +10,9 @@ import DashboardLayout from "../../components/layouts/DashboardLayout";
 import { API_PATHS } from "../../utils/apiPaths";
 import axiosInstance from "../../utils/axiosInstance";
 import { PRIORITY_DATA } from "../../utils/data";
+import moment from "moment";
+import Modal from "../../components/layouts/Modal";
+import DeleteAlert from "../../components/layouts/DeleteAlert ";
 
 const CreateTask = () => {
   const location = useLocation();
@@ -22,7 +25,7 @@ const CreateTask = () => {
     priority: "Low",
     dueDate: null,
     assignedTo: [],
-    todoChecklist: [],
+    todoCheckList: [],
     attachments: [],
   });
 
@@ -44,7 +47,7 @@ const CreateTask = () => {
       priority: "Low",
       dueDate: null,
       assignedTo: [],
-      todoChecklist: [],
+      todoCheckList: [],
       attachments: [],
     });
   };
@@ -53,15 +56,17 @@ const CreateTask = () => {
     setLoading(true);
 
     try {
-      const todolist = taskData.todoChecklist?.map((item) => ({
+      const todolist = taskData.todoCheckList?.map((item) => ({
         text: item,
         completed: false,
       }));
 
+      console.log(todolist)
+
       const response = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
         ...taskData,
         dueDate: new Date(taskData.dueDate).toISOString(),
-        todoChecklist: todolist,
+        todoCheckList: todolist,
       });
 
       toast.success("Task Created Successfully");
@@ -75,7 +80,37 @@ const CreateTask = () => {
     }
   };
 
-  const updateTask = async () => {};
+  const updateTask = async () => {
+    setLoading(true);
+   try {
+ 
+
+    const todoList = taskData.todoCheckList?.map((item) => {
+    const prevTodoChecklist = currentTask?.todoCheckList || [];
+    const matchedTask = prevTodoChecklist.find((task) => task.text === item);
+
+    return {
+      text: item,
+      completed: matchedTask ? matchedTask.completed : false,
+    };
+  });
+
+ const response = await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK(taskId),{
+  ...taskData,
+  dueDate:new Date(taskData.dueDate).toISOString(),
+  todoCheckList:todoList,
+ })
+
+ toast.success("Task Updated Successfully");
+
+} catch (error) {
+  console.error('Error updating task:', error);
+  setLoading(false);
+}finally{
+  setLoading(false);
+}
+
+  };
 
   const handleSubmit = async () => {
     setError(null);
@@ -100,7 +135,7 @@ const CreateTask = () => {
       return;
     }
 
-    if (taskData.todoChecklist?.length === 0) {
+    if (taskData.todoCheckList?.length === 0) {
       setError("Add atleast one todo task");
       return;
     }
@@ -113,10 +148,56 @@ const CreateTask = () => {
     createTask();
   };
 
-  const getTaskDetailsByID = async () => {};
+  const getTaskDetailsByID = async () => {
+    try {
+      const response = await axiosInstance.get(API_PATHS.TASKS.GET_TASK_BY_ID(taskId));
+       
+     if(response.data){
+      const taskInfo = response.data;
+      setCurrentTask(taskInfo);
+      
+     setTaskData((prevState) => ({
+  title: taskInfo.title,
+  description: taskInfo.description,
+  priority: taskInfo.priority,
+  dueDate: taskInfo.dueDate ? moment(taskInfo.dueDate).format("YYYY-MM-DD") : null,
+  assignedTo: taskInfo?.assignedTo?.map((item) => item?._id) || [],
+  todoCheckList: taskInfo?.todoCheckList?.map((item) => item?.text) || [],
+  attachments: taskInfo?.attachments || [],
+}));
 
-  const deleteTask = async () => {};
 
+     }
+
+    } catch (error) {
+       console.log("Error fetching users",error);
+    }
+  };
+
+  const deleteTask = async () => {
+    try {
+      await axiosInstance.delete(API_PATHS.TASKS.DELETE_TASK(taskId));
+
+      setOpenDeleteAlert(false);
+      toast.success("Task details deleted successfully");
+      navigate('/admin/tasks')
+    } catch (error) {
+      console.error("Error deleting task",error.response?.data?.message || error.message);
+    }
+  };
+
+
+  useEffect(() => {
+      if(taskId){
+        getTaskDetailsByID(taskId);
+      }
+  
+    return () => {
+      
+    }
+  }, [taskId])
+  
+console.log(taskData)
   return (
     <DashboardLayout activeMenu="Create Tasks">
       <div className="mt-5">
@@ -215,9 +296,9 @@ const CreateTask = () => {
               </label>
 
               <TodoListInput
-                todoList={taskData?.todoChecklist}
+                todoList={taskData?.todoCheckList}
                 setTodoList={(value) => {
-                  handleValueChange("todoChecklist", value);
+                  handleValueChange("todoCheckList", value);
                 }}
               ></TodoListInput>
             </div>
@@ -251,6 +332,23 @@ const CreateTask = () => {
           </div>
         </div>
       </div>
+
+
+    
+    <Modal 
+    isOpen={openDeleteAlert}
+    onClose={()=> setOpenDeleteAlert(false)}
+    title="Delete Task"
+    >
+      <DeleteAlert
+      content="Are you sure you want to delete this task?"
+      onDelete={() => deleteTask()}
+        />
+    </Modal>
+
+
+
+
     </DashboardLayout>
   );
 };
