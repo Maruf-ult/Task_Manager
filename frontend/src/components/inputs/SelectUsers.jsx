@@ -55,7 +55,7 @@ const SelectUsers = ({ selectedUsers, setSelectedUsers }) => {
 return (
   <div className="space-y-4 mt-2">
     {selectedUserAvatars.length === 0 && (
-      <button className="card-btn" onClick={() => setIsModalOpen(true)}>
+      <button className="card-btn cursor-pointer" onClick={() => setIsModalOpen(true)}>
         <LuUser className="text-sm" /> Add Members
       </button>
     )}
