@@ -13,6 +13,7 @@ import UserProvider, { UserContext } from "./context/UseContext.jsx";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import ResetPass from "./pages/Auth/ResetPass.jsx";
 
 
 
@@ -24,6 +25,7 @@ function App() {
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signUp" element={<SignUp />} />
+        <Route path="/reset-pass" element={<ResetPass/>}/>
 
         {/* Admin Routes */}
         <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
