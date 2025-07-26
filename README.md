@@ -63,18 +63,16 @@ https://task-manager-app.onrender.com
      Create a .env file in the backend directory with the following:
 
      ```
-       PORT=8000
-MONGO_URI=your_mongo_db_connection_string
-JWT_SECRET=your_jwt_secret_key
-ADMIN_INVITE_TOKEN=your_admin_invite_token
-NODE_ENV=development
-SMTP_USER=your_smtp_username
-SMTP_PASS=your_smtp_password
-SENDER_EMAIL=your_sender_email
-CLIENT_URL=http://localhost:3000
+        PORT=8000
+        MONGO_URI=your_mongo_db_connection_string
+        JWT_SECRET=your_jwt_secret_key
+        ADMIN_INVITE_TOKEN=your_admin_invite_token
+        NODE_ENV=development
+        SMTP_USER=your_smtp_username
+        SMTP_PASS=your_smtp_password
+        SENDER_EMAIL=your_sender_email
+        CLIENT_URL=http://localhost:3000
 
-
-   
      ```
     
 6. Configure MongoDB:
