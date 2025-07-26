@@ -95,4 +95,10 @@ https://task-manager-app.onrender.com
    ```
    cd frontend
    npm run dev
-   ```   
+   ```
+
+
+   
+Feel free to adapt this template to your project's specific requirements. Happy coding! 🚀
+
+: GitHub - Maruf-ult/Task_Manager
