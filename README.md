@@ -21,7 +21,6 @@ https://task-manager-app.onrender.com
 - **Node.js** – Backend runtime  
 - **Express.js** – RESTful API  
 - **MongoDB** – NoSQL Database  
-- **Redux Toolkit** – State management  
 - **JWT & bcrypt** – Authentication and encryption  
 - **Nodemailer** – Email service for reset links & task alerts  
 - **XLSX (SheetJS)** – Exporting task and user lists  
