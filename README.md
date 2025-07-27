@@ -23,7 +23,7 @@ https://task-manager-app.onrender.com
 - **MongoDB** – NoSQL Database  
 - **JWT & bcrypt** – Authentication and encryption  
 - **Nodemailer** – Email service for reset links & task alerts  
-- **XLSX (SheetJS)** – Exporting task and user lists  
+- **XLSX (excel.js)** – Exporting task and user lists  
 - **React Router** – Client-side routing  
 
 ## ⚙️ Installation  
