@@ -41,10 +41,17 @@ const handleSignup = async (e) => {
   setError("");
 
   try {
-    if (profilePic && profilePic instanceof File) {
-      const imgUploadRes = await uploadImage(profilePic);
-      profileImageUrl = imgUploadRes.imageUrl || "";
-    }
+  
+ if (profilePic && profilePic instanceof File) {
+  try {
+    const imgUploadRes = await uploadImage(profilePic);
+    profileImageUrl = imgUploadRes?.imageUrl || "";
+  } catch (err) {
+    console.error("Image upload failed:", err);
+    setError("Failed to upload profile image.");
+    return;
+  }
+}
 
     const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
       name: fullName,
