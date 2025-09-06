@@ -13,14 +13,18 @@ router.post("/reset-password",resetPassword);
 router.get("/profile",protect,getUserProfile );
 router.put("/profile",protect,updateUserProfile );
 
-router.post("/upload-image",upload.single("image"), (req,res) =>{
-     console.log(req.file)
-     if(!req.file){
-          return res.status(400).json({message:"No file uploaded"});
-     }
-     const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-     return res.status(200).json({imageUrl});
-} )
+router.post("/upload-image", upload.single("image"), (req, res) => {
+  console.log("Request Body:", req.body);
+  console.log("Uploaded File:", req.file);
+
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+  return res.status(200).json({ imageUrl });
+});
+
 
 
 
