@@ -2,6 +2,8 @@
 
 ## 🔗 Live Link  
 https://task-manager-1-kqlb.onrender.com
+## Admin Invite Token
+4588944
 
 ## 📌 Description  
 **Task Manager** is a full-stack **MERN web application** designed to streamline team task assignment and tracking. It features role-based dashboards for both **Admins** and **Users**, with advanced functionalities such as **task management**, **Excel export**, **email notifications**, and **secure authentication with password reset**. Admins can manage users, monitor progress, and assign tasks, while users can view and update their assigned tasks.
