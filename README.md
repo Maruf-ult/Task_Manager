@@ -34,7 +34,7 @@ https://task-manager-1-kqlb.onrender.com
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/your-username/task-manager
+   git clone https://github.com/Maruf-ult/task-manager
 
 ## ⚙️ Installation  
 
