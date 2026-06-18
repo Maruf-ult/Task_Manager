@@ -63,7 +63,7 @@ function UserDashboard() {
   };
 
   const onSeeMore = () => {
-    navigate("/admin/tasks");
+    navigate("/user/tasks");
   };
 
   useEffect(() => {
@@ -145,7 +145,7 @@ function UserDashboard() {
               <h5 className="text-lg">Recent Tasks</h5>
 
               <button className="card-btn" onClick={onSeeMore}>
-                See ALl <LuArrowRight className="text-base" />
+                See All <LuArrowRight className="text-base" />
               </button>
             </div>
             <TaskListTable tableData={dashboardData?.recentTasks || []} />
