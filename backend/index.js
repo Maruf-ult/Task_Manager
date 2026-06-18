@@ -14,21 +14,29 @@ dotenv.config();
 
 app.use(
      cors({
-          origin:process.env.CLIENT_URL || "*",
+          origin: process.env.CLIENT_URL || "*",
           methods: ["GET","POST","PUT","DELETE"],
-          allowedHeaders:["Content-Type","Authorization"],
+          allowedHeaders: ["Content-Type","Authorization"],
      })
 );
 
 app.use(express.json());
-connectDB()
+connectDB();
 
-app.use("/api/auth",authRoutes);
-app.use("/api/users",userRoutes);
-app.use("/api/tasks",taskRoutes);
-app.use("/api/reports",reportRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/reports", reportRoutes);
+
+// Note: This only serves existing files bundled during deployment. 
+// Newly uploaded files will not persist here on Vercel.
 app.use("/uploads", express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), "uploads")));
 
+// FIX: Only listen on a port if running locally
+if (process.env.NODE_ENV !== 'production') {
+     const PORT = process.env.PORT || 5000;
+     app.listen(PORT, () => console.log(`Server is running locally on port ${PORT}`));
+}
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, ()=>console.log(`server is running on port ${PORT}`))
+// FIX: Export for Vercel's serverless engine
+export default app;
