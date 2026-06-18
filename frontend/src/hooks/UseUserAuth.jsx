@@ -4,7 +4,7 @@ import { UserContext } from "../context/UseContext";
 
 
 export const UseUserAuth = () =>{
-     const {user,loading,cleanUser} = useContext(UserContext);
+     const {user,loading,clearUser} = useContext(UserContext);
      const navigate = useNavigate();
 
      useEffect(()=>{
@@ -12,8 +12,8 @@ export const UseUserAuth = () =>{
                return;
           if(user) return;
           if(!user){
-               cleanUser();
+               clearUser();
                navigate('/login');
           }
-     }, [user,loading,cleanUser,navigate]);
+     }, [user,loading,clearUser,navigate]);
 }

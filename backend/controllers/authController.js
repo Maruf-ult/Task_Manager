@@ -1,20 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import transporter from "../config/nodeMailer.js";
 import User from "../models/User.js";
-import {PASSWORD_RESET_TEMPLATE,CONGRATS_MSG_TEMPLATE } from '../config/emailTemplates.js'
+import { PASSWORD_RESET_TEMPLATE } from "../config/emailTemplates.js";
 
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
-};
-
-const getMailErrorMessage = (error) => {
-  const parts = [error?.message, error?.response, error?.responseCode, error?.command]
-    .filter(Boolean)
-    .map(String);
-
-  return parts.length > 0 ? parts.join(" | ") : "Unknown email delivery error";
 };
 
 export const registerUser = async (req, res) => {
@@ -47,22 +38,6 @@ export const registerUser = async (req, res) => {
       role,
     });
 
-    let emailWarning = "";
-
-    try {
-      const mailOptions = {
-        from: process.env.SENDER_EMAIL,
-        to: email,
-        subject: "Welcome to Task Manager",
-        html: CONGRATS_MSG_TEMPLATE({ email: user.email }),
-      };
-
-      await transporter.sendMail(mailOptions);
-    } catch (mailError) {
-      emailWarning = getMailErrorMessage(mailError);
-      console.error("Welcome email failed:", emailWarning);
-    }
-
     return res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -70,10 +45,7 @@ export const registerUser = async (req, res) => {
       role: user.role,
       profileImageUrl: user.profileImageUrl,
       token: generateToken(user._id),
-      message: emailWarning
-        ? `Account created, but welcome email failed: ${emailWarning}`
-        : "Account created successfully",
-      emailWarning: emailWarning || undefined,
+      message: "Account created successfully",
     });
   } catch (error) {
     return res.status(500).json({
