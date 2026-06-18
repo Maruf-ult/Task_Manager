@@ -9,6 +9,14 @@ const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
+const getMailErrorMessage = (error) => {
+  const parts = [error?.message, error?.response, error?.responseCode, error?.command]
+    .filter(Boolean)
+    .map(String);
+
+  return parts.length > 0 ? parts.join(" | ") : "Unknown email delivery error";
+};
+
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, profileImageUrl, adminInviteToken } =
@@ -39,14 +47,21 @@ export const registerUser = async (req, res) => {
       role,
     });
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Welcome to Task Manager",
-      html: CONGRATS_MSG_TEMPLATE({ email: user.email })
-    };
+    let emailWarning = "";
 
-    await transporter.sendMail(mailOptions);
+    try {
+      const mailOptions = {
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: "Welcome to Task Manager",
+        html: CONGRATS_MSG_TEMPLATE({ email: user.email }),
+      };
+
+      await transporter.sendMail(mailOptions);
+    } catch (mailError) {
+      emailWarning = getMailErrorMessage(mailError);
+      console.error("Welcome email failed:", emailWarning);
+    }
 
     return res.status(201).json({
       _id: user._id,
@@ -55,9 +70,16 @@ export const registerUser = async (req, res) => {
       role: user.role,
       profileImageUrl: user.profileImageUrl,
       token: generateToken(user._id),
+      message: emailWarning
+        ? `Account created, but welcome email failed: ${emailWarning}`
+        : "Account created successfully",
+      emailWarning: emailWarning || undefined,
     });
   } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+    return res.status(500).json({
+      message: "Server error",
+      error: error?.message || "Unknown server error",
+    });
   }
 };
 
@@ -68,13 +90,13 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(404).json({ message: "No account found for this email" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res.status(401).json({ message: "Incorrect password" });
     }
 
     return res.json({
@@ -86,7 +108,10 @@ export const loginUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+    return res.status(500).json({
+      message: "Server error",
+      error: error?.message || "Unknown server error",
+    });
   }
 };
 
@@ -185,7 +210,10 @@ export const getUserProfile = async (req, res) => {
     }
     return res.json(user);
   } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+    return res.status(500).json({
+      message: "Server error",
+      error: error?.message || "Unknown server error",
+    });
   }
 };
 
@@ -215,6 +243,9 @@ export const updateUserProfile = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+    return res.status(500).json({
+      message: "Server error",
+      error: error?.message || "Unknown server error",
+    });
   }
 };

@@ -9,6 +9,12 @@ import axiosInstance from "../../utils/axiosInstance.js";
 import { validateEmail } from "../../utils/helper";
 import uploadImage from "../../utils/uploadImage.js";
 
+const getErrorMessage = (error) =>
+  error.response?.data?.message ||
+  error.response?.data?.error ||
+  error.message ||
+  "Something went wrong. Please try again.";
+
 function SignUp() {
   const [profilePic, setProfilePic] = useState(null);
   const [fullName, setFullName] = useState("");
@@ -76,11 +82,7 @@ const handleSignup = async (e) => {
       }
     }
   } catch (error) {
-    if (error.response && error.response.data.message) {
-      setError(error.response.data.message);
-    } else {
-      setError("Something went wrong. Please try again.");
-    }
+    setError(getErrorMessage(error));
   }
 };
 

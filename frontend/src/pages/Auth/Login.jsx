@@ -8,6 +8,12 @@ import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js";
 import { UserContext } from "../../context/UseContext.jsx";
 
+const getErrorMessage = (error) =>
+  error.response?.data?.message ||
+  error.response?.data?.error ||
+  error.message ||
+  "Something went wrong. Try again.";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,9 +48,7 @@ const handleLogin = async (e) => {
     }
   } catch (error) {
     console.error("Login error:", error);
-    setError(
-      error.response?.data?.message || error.message || "Something went wrong. Try again."
-    );
+    setError(getErrorMessage(error));
   }
 };
 
