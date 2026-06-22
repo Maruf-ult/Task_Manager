@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Input from "../../components/inputs/Inputs.jsx";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import { Link } from "react-router-dom";
@@ -25,8 +26,20 @@ function Login() {
 const handleLogin = async (e) => {
   e.preventDefault();
 
-  if (!validateEmail(email)) return setError("Invalid email");
-  if (!password) return setError("Enter password");
+  setError("");
+
+  if (!validateEmail(email)) {
+    const message = "Invalid email";
+    setError(message);
+    toast.error(message);
+    return;
+  }
+  if (!password) {
+    const message = "Enter password";
+    setError(message);
+    toast.error(message);
+    return;
+  }
 
   try {
     const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
@@ -38,17 +51,21 @@ const handleLogin = async (e) => {
 
     const userData = response.data;
     updateUser(userData);
+    toast.success("Logged in successfully");
 
     if (userData.role === "admin") {
       navigate("/admin/dashboard");
     } else if (userData.role === "member") {
       navigate("/user/dashboard");
     } else {
+      toast.error("Unable to determine your role. Please contact support.");
       navigate("/login");
     }
   } catch (error) {
     console.error("Login error:", error);
-    setError(getErrorMessage(error));
+    const message = getErrorMessage(error);
+    setError(message);
+    toast.error(message);
   }
 };
 

@@ -59,10 +59,10 @@ const ManageTasks = () => {
       link.click();
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
-
+      toast.success("Task report downloaded successfully");
     } catch (error) {
        console.error("Error downloading task details",error);
-       toast.error("Failed to download task details. Please try agian.");
+       toast.error("Failed to download task details. Please try again.");
     }
   };
 

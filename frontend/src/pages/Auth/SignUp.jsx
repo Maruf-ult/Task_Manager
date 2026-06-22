@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Input from "../../components/inputs/Inputs.jsx";
 import ProfilePhotoSelector from "../../components/inputs/ProfilePhotoSelector.jsx";
 import AuthLayout from "../../components/layouts/AuthLayout.jsx";
@@ -31,33 +32,40 @@ const handleSignup = async (e) => {
   let profileImageUrl = "";
 
   if (!fullName) {
-    setError("Please enter full name.");
+    const message = "Please enter full name.";
+    setError(message);
+    toast.error(message);
     return;
   }
 
   if (!validateEmail(email)) {
-    setError("Please enter a valid email address");
+    const message = "Please enter a valid email address";
+    setError(message);
+    toast.error(message);
     return;
   }
   if (!password) {
-    setError("Please enter the password");
+    const message = "Please enter the password";
+    setError(message);
+    toast.error(message);
     return;
   }
 
   setError("");
 
   try {
-  
- if (profilePic && profilePic instanceof File) {
-  try {
-    const imgUploadRes = await uploadImage(profilePic);
-    profileImageUrl = imgUploadRes?.imageUrl || "";
-  } catch (err) {
-    console.error("Image upload failed:", err);
-    setError("Failed to upload profile image.");
-    return;
-  }
-}
+    if (profilePic && profilePic instanceof File) {
+      try {
+        const imgUploadRes = await uploadImage(profilePic);
+        profileImageUrl = imgUploadRes?.imageUrl || "";
+      } catch (err) {
+        console.error("Image upload failed:", err);
+        const message = "Failed to upload profile image.";
+        setError(message);
+        toast.error(message);
+        return;
+      }
+    }
 
     const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
       name: fullName,
@@ -67,11 +75,12 @@ const handleSignup = async (e) => {
       adminInviteToken,
     });
 
-    const userData = response.data; 
+    const userData = response.data;
 
     if (userData.token) {
       localStorage.setItem("token", userData.token);
       updateUser(userData);
+      toast.success("Account created successfully");
 
       if (userData.role === "admin") {
         navigate("/admin/dashboard");
@@ -82,7 +91,9 @@ const handleSignup = async (e) => {
       }
     }
   } catch (error) {
-    setError(getErrorMessage(error));
+    const message = getErrorMessage(error);
+    setError(message);
+    toast.error(message);
   }
 };
 

@@ -37,6 +37,7 @@ const ManageUsers = () => {
       link.click();
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
+      toast.success("User report downloaded successfully");
 
        } catch (error) {
           console.error("Error downloading user details",error)

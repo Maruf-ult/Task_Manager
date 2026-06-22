@@ -1,5 +1,6 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { LuSquareArrowOutUpRight } from "react-icons/lu";
 import { useParams } from "react-router-dom";
 import AvatarGroup from "../../components/layouts/AvatarGroup";
@@ -35,6 +36,7 @@ function ViewTaskDetails() {
       }
     } catch (error) {
       console.error("Error fetching users", error);
+      toast.error("Failed to load task details. Please try again.");
     }
   };
 
@@ -70,6 +72,7 @@ const updateTodoChecklist = async (index) => {
       // Update with backend confirmation (if available)
       if (response.status === 200 && response.data?.task) {
         setTask(response.data.task);
+        toast.success("Task updated successfully");
       }
     } catch (error) {
       // Revert on failure
@@ -83,6 +86,7 @@ const updateTodoChecklist = async (index) => {
         status: revertedStatus,
       }));
 
+      toast.error("Unable to update checklist. Please try again.");
       console.error("Checklist update failed", error);
     }
   }

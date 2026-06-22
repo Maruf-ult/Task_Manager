@@ -69,12 +69,12 @@ const CreateTask = () => {
         todoCheckList: todolist,
       });
 
-      toast.success("Task Created Successfully");
-
+      toast.success("Task created successfully");
       clearData();
     } catch (error) {
       console.log("Error creating task:", error);
-      setLoading(false);
+      const message = error.response?.data?.message || error.message || "Unable to create task. Please try again.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -82,61 +82,68 @@ const CreateTask = () => {
 
   const updateTask = async () => {
     setLoading(true);
-   try {
- 
+    try {
+      const todoList = taskData.todoCheckList?.map((item) => {
+        const prevTodoChecklist = currentTask?.todoCheckList || [];
+        const matchedTask = prevTodoChecklist.find((task) => task.text === item);
 
-    const todoList = taskData.todoCheckList?.map((item) => {
-    const prevTodoChecklist = currentTask?.todoCheckList || [];
-    const matchedTask = prevTodoChecklist.find((task) => task.text === item);
+        return {
+          text: item,
+          completed: matchedTask ? matchedTask.completed : false,
+        };
+      });
 
-    return {
-      text: item,
-      completed: matchedTask ? matchedTask.completed : false,
-    };
-  });
+      const response = await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK(taskId), {
+        ...taskData,
+        dueDate: new Date(taskData.dueDate).toISOString(),
+        todoCheckList: todoList,
+      });
 
- const response = await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK(taskId),{
-  ...taskData,
-  dueDate:new Date(taskData.dueDate).toISOString(),
-  todoCheckList:todoList,
- })
-
- toast.success("Task Updated Successfully");
-
-} catch (error) {
-  console.error('Error updating task:', error);
-  setLoading(false);
-}finally{
-  setLoading(false);
-}
-
+      toast.success("Task updated successfully");
+    } catch (error) {
+      console.error('Error updating task:', error);
+      const message = error.response?.data?.message || error.message || "Unable to update task. Please try again.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async () => {
     setError(null);
 
     if (!taskData.title.trim()) {
-      setError("Title is required.");
+      const message = "Title is required.";
+      setError(message);
+      toast.error(message);
       return;
     }
 
     if (!taskData.description.trim()) {
-      setError("Description is required");
+      const message = "Description is required.";
+      setError(message);
+      toast.error(message);
       return;
     }
 
     if (!taskData.dueDate) {
-      setError("Due date is required");
+      const message = "Due date is required.";
+      setError(message);
+      toast.error(message);
       return;
     }
 
     if (taskData.assignedTo?.length === 0) {
-      setError("Task not assigned to any member");
+      const message = "Task not assigned to any member.";
+      setError(message);
+      toast.error(message);
       return;
     }
 
     if (taskData.todoCheckList?.length === 0) {
-      setError("Add atleast one todo task");
+      const message = "Add at least one todo task.";
+      setError(message);
+      toast.error(message);
       return;
     }
 
@@ -171,6 +178,7 @@ const CreateTask = () => {
 
     } catch (error) {
        console.log("Error fetching users",error);
+       toast.error("Failed to load task information. Please try again.");
     }
   };
 
@@ -179,10 +187,12 @@ const CreateTask = () => {
       await axiosInstance.delete(API_PATHS.TASKS.DELETE_TASK(taskId));
 
       setOpenDeleteAlert(false);
-      toast.success("Task details deleted successfully");
+      toast.success("Task deleted successfully");
       navigate('/admin/tasks')
     } catch (error) {
       console.error("Error deleting task",error.response?.data?.message || error.message);
+      const message = error.response?.data?.message || error.message || "Unable to delete task. Please try again.";
+      toast.error(message);
     }
   };
 
