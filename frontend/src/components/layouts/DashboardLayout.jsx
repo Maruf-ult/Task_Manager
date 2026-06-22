@@ -1,12 +1,19 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { UserContext } from '../../context/UseContext'
 import SideMenu from './SideMenu'
 import Navbar from './Navbar'
 
 const DashboardLayout = ({children,activeMenu}) => {
-  
-   const {user} = useContext(UserContext)
-  
+  const { user, pageLoading, setPageLoading } = useContext(UserContext)
+  const location = useLocation();
+
+  useEffect(() => {
+    if (pageLoading) {
+      setPageLoading(false);
+    }
+  }, [location.pathname, pageLoading, setPageLoading]);
+
      return (
       <div className=''>
                 <Navbar activeMenu={activeMenu}/>
@@ -19,6 +26,12 @@ const DashboardLayout = ({children,activeMenu}) => {
                          <div className='grow mx-5'>{children}</div>
                      </div>
                 ) }
+
+                {pageLoading && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+                    <div className="w-14 h-14 rounded-full border-4 border-t-transparent border-white animate-spin" />
+                  </div>
+                )}
       </div>
   )
 }

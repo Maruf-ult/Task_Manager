@@ -11,6 +11,7 @@ import axiosInstance from "../../utils/axiosInstance";
 function ViewTaskDetails() {
   const { id } = useParams();
   const [task, setTask] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getStatusTagColor = (status) => {
     switch (status) {
@@ -26,6 +27,7 @@ function ViewTaskDetails() {
 
   const getTaskDetailsByID = async () => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.get(
         API_PATHS.TASKS.GET_TASK_BY_ID(id)
       );
@@ -37,6 +39,8 @@ function ViewTaskDetails() {
     } catch (error) {
       console.error("Error fetching users", error);
       toast.error("Failed to load task details. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,7 +106,11 @@ const updateTodoChecklist = async (index) => {
   return (
     <DashboardLayout activeMenu="My Tasks">
       <div className="mt-5">
-        {task && (
+        {isLoading ? (
+          <div className="flex justify-center items-center h-96">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          </div>
+        ) : task ? (
           <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
             <div className="form-card col-span-3">
               <div className="flex items-center justify-between">
@@ -160,7 +168,7 @@ const updateTodoChecklist = async (index) => {
 
                 {task?.todoCheckList?.map((item, index) => (
                   <TodoCheckList
-                    key={`todo_${index}_${item.text}_${item.completed}`} // more unique
+                    key={`todo_${index}_${item.text}_${item.completed}`}
                     text={item.text}
                     isChecked={item?.completed}
                     onChange={() => updateTodoChecklist(index)}
@@ -183,6 +191,10 @@ const updateTodoChecklist = async (index) => {
                 </div>
               )}
             </div>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-96">
+            <p className="text-gray-500 text-lg">Task not found</p>
           </div>
         )}
       </div>

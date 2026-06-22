@@ -4,7 +4,7 @@ import { UserContext } from "../../context/UseContext";
 import { SIDE_MENU_DATA, SIDE_MENU_USER_DATA } from "../../utils/data";
 
 const SideMenu = ({ activeMenu }) => {
-  const { user, clearUser } = useContext(UserContext);
+  const { user, clearUser, setPageLoading } = useContext(UserContext);
   const [sideMenuData, setSideMenuData] = useState([]);
 
   const navigate = useNavigate();
@@ -14,10 +14,13 @@ const SideMenu = ({ activeMenu }) => {
       handleLogout();
       return;
     }
+
+    setPageLoading(true);
     navigate(route);
   };
 
   const handleLogout = () => {
+    setPageLoading(true);
     localStorage.clear();
     clearUser();
     navigate("/login");

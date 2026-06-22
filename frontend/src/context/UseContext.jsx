@@ -7,6 +7,7 @@ export const UserContext = createContext();
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
 
 useEffect(() => {
   const accessToken = localStorage.getItem("token");
@@ -58,7 +59,7 @@ useEffect(() => {
   };
 
   return (
-    <UserContext.Provider value={{ user, loading, updateUser, clearUser }}>
+    <UserContext.Provider value={{ user, loading, pageLoading, setPageLoading, updateUser, clearUser }}>
       {children}
     </UserContext.Provider>
   );

@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 const ManageTasks = () => {
   const [allTasks, setAllTasks] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [tabs, setTabs] = useState([]);
   const [filterStatus, setFilterStatus] = useState("All");
 
@@ -18,6 +18,7 @@ const ManageTasks = () => {
 
   const getAllTasks = async () => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.get(API_PATHS.TASKS.GET_ALL_TASKS, {
         params: {
           status: filterStatus === "All" ? "" : filterStatus,
@@ -38,6 +39,9 @@ const ManageTasks = () => {
       setTabs(statusArray);
     } catch (error) {
       console.log("Error fetching users:", error);
+      toast.error("Failed to load tasks");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -107,25 +111,35 @@ const ManageTasks = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 ">
-          {allTasks?.map((item, index) => (
-            <TaskCard
-              key={item._id}
-              title={item.title}
-              description={item.description}
-              priority={item.priority}
-              status={item.status}
-              progress={item.progress}
-              createdAt={item.createdAt}
-              dueDate={item.dueDate}
-              assignedTo={item.assignedTo?.map((user) => user.profileImageUrl)}
-              attachmentCount={item.attachements?.length || 0}
-              completedTodoCount={item.completedTodoCount || 0}
-              todoCheckList={item.todoCheckList || []}
-              onClick={() => handleClick(item)}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          </div>
+        ) : allTasks.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 ">
+            {allTasks?.map((item, index) => (
+              <TaskCard
+                key={item._id}
+                title={item.title}
+                description={item.description}
+                priority={item.priority}
+                status={item.status}
+                progress={item.progress}
+                createdAt={item.createdAt}
+                dueDate={item.dueDate}
+                assignedTo={item.assignedTo?.map((user) => user.profileImageUrl)}
+                attachmentCount={item.attachements?.length || 0}
+                completedTodoCount={item.completedTodoCount || 0}
+                todoCheckList={item.todoCheckList || []}
+                onClick={() => handleClick(item)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-gray-500 text-lg">No tasks found</p>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

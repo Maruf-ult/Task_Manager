@@ -7,11 +7,13 @@ import UserCard from '../../components/Cards/UserCard';
 import toast from 'react-hot-toast';
 
 const ManageUsers = () => {
-  
+
   const [alUsers, setAllUsers]= useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getAllUsers = async () => {
     try {
+      setIsLoading(true);
       const response = await axiosInstance.get(API_PATHS.USERS.GET_ALL_USERS);
 
       if(response.data?.length > 0){
@@ -19,6 +21,9 @@ const ManageUsers = () => {
       }
     } catch (error) {
        console.error("Error fetching users:",error);
+       toast.error("Failed to load team members");
+    } finally {
+      setIsLoading(false);
     }
   };
 
