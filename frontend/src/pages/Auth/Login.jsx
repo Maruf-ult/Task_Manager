@@ -47,6 +47,10 @@ const handleLogin = async (e) => {
       password,
     });
 
+    if (!response || !response.data) {
+      throw new Error("Invalid server response. Please try again.");
+    }
+
     console.log("Login response:", response.data);
 
     const userData = response.data;

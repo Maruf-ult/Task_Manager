@@ -75,6 +75,10 @@ const handleSignup = async (e) => {
       adminInviteToken,
     });
 
+    if (!response || !response.data) {
+      throw new Error("Invalid server response. Please try again.");
+    }
+
     const userData = response.data;
 
     if (userData.token) {
