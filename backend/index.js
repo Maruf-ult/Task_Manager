@@ -30,6 +30,9 @@ console.log("📍 taskRoutes imported");
 import reportRoutes from './routes/reportRoutes.js'
 console.log("📍 reportRoutes imported");
 
+import { errorHandler } from './middlewares/errorMiddleware.js'
+console.log("📍 errorHandler imported");
+
 console.log("📍 Creating express app");
 const app = express();
 
@@ -63,6 +66,9 @@ app.use("/api/reports", reportRoutes);
 
 console.log("📍 Setting up static files");
 app.use("/uploads", express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), "uploads")));
+
+console.log("📍 Setting up global error handler");
+app.use(errorHandler);
 
 console.log("📍 Starting server");
 if (process.env.NODE_ENV !== 'production') {

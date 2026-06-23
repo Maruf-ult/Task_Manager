@@ -22,9 +22,15 @@ function Navbar({ activeMenu }) {
       <h2 className="text-lg font-medium text-black mt-1">Task Manager</h2>
 
       {openSideMenu && (
-        <div className="fixed top-[61px] -ml-4 bg-white">
-          <SideMenu activeMenu={activeMenu} />
-        </div>
+        <>
+          <div 
+            className="fixed inset-0 top-[61px] bg-slate-900/25 backdrop-blur-xs z-30 transition-opacity duration-300 lg:hidden"
+            onClick={() => setOpenSideMenu(false)}
+          />
+          <div className="fixed top-[61px] left-0 z-40 bg-white shadow-xl border-r border-gray-200/50 animate-slide-in">
+            <SideMenu activeMenu={activeMenu} />
+          </div>
+        </>
       )}
     </div>
   );

@@ -5,7 +5,7 @@ import { PASSWORD_RESET_TEMPLATE } from "../config/emailTemplates.js";
 
 
 const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || "30d" });
 };
 
 export const registerUser = async (req, res) => {

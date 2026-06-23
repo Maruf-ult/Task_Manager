@@ -1,7 +1,7 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { LuSquareArrowOutUpRight } from "react-icons/lu";
+import { LuSquareArrowOutUpRight, LuFileText, LuImage, LuLink } from "react-icons/lu";
 import { useParams } from "react-router-dom";
 import AvatarGroup from "../../components/layouts/AvatarGroup";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
@@ -235,23 +235,49 @@ const TodoCheckList = ({ text, isChecked, onChange }) => {
     </label>
   );
 };
+const getFileName = (url) => {
+  try {
+    const decodedUrl = decodeURIComponent(url);
+    const parts = decodedUrl.split('/');
+    const filenameWithParams = parts[parts.length - 1];
+    return filenameWithParams.split('?')[0];
+  } catch (error) {
+    return url;
+  }
+};
+
+const getFileIcon = (url) => {
+  const ext = url.split('.').pop().toLowerCase().split('?')[0];
+  if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(ext)) {
+    return <LuImage className="text-blue-500 text-lg" />;
+  }
+  if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip'].includes(ext)) {
+    return <LuFileText className="text-amber-500 text-lg" />;
+  }
+  return <LuLink className="text-indigo-500 text-lg" />;
+};
+
 const Attachment = ({ link, index, onClick }) => {
+  const filename = getFileName(link);
+  const icon = getFileIcon(link);
+
   return (
-    <>
-      <div
-        className="flex justify-between bg-gray-50 border border-gray-100 px-3 py-2 rounded-md mb-3 mt-2 cursor-pointer"
-        onClick={onClick}
-      >
-        <div className="flex-1 flex items-center gap-3 ">
-          <span className="text-xs text-gray-400 font-semibold mr-2">
-            {index < 9 ? `0${index + 1}` : index + 1}
-          </span>
-
-          <p className="text-xs text-black">{link}</p>
+    <div
+      className="flex justify-between items-center bg-slate-50 hover:bg-slate-100/70 border border-slate-200/60 px-4 py-2.5 rounded-lg mb-2.5 mt-1 cursor-pointer transition-all duration-200 hover:shadow-xs group"
+      onClick={onClick}
+    >
+      <div className="flex-1 flex items-center gap-3 overflow-hidden">
+        <span className="text-xs text-gray-400 font-semibold w-5 select-none">
+          {index < 9 ? `0${index + 1}` : index + 1}
+        </span>
+        <div className="flex items-center gap-2 max-w-[90%] overflow-hidden">
+          {icon}
+          <p className="text-xs text-gray-700 font-medium truncate group-hover:text-blue-600 transition-colors duration-200">
+            {filename}
+          </p>
         </div>
-
-        <LuSquareArrowOutUpRight className="text-gray-400 " />
       </div>
-    </>
+      <LuSquareArrowOutUpRight className="text-gray-400 group-hover:text-blue-500 transition-colors duration-200 shrink-0" />
+    </div>
   );
 };

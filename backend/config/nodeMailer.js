@@ -1,17 +1,23 @@
 import nodemailer from 'nodemailer'
+import dotenv from 'dotenv'
 
+dotenv.config();
+
+if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+     console.warn("⚠️ Warning: SMTP_USER and SMTP_PASS are not configured in environment variables. E-mail notifications will fail.");
+}
 
 const transporter = nodemailer.createTransport({
-     host:"smtp-relay.brevo.com",
-     port:587,
-     secure:false,
-     auth:{
-          user:process.env.SMTP_USER||"8b28aa003@smtp-brevo.com",
-          pass:process.env.SMTP_PASS||"wMBQg4sHKAtqFDIN",
+     host: process.env.SMTP_HOST || "smtp-relay.brevo.com",
+     port: parseInt(process.env.SMTP_PORT) || 587,
+     secure: process.env.SMTP_SECURE === "true",
+     auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
      },
-     tls:{
-          ciphers:'SSLv3',
-          rejectUnauthorized:false
+     tls: {
+          ciphers: 'SSLv3',
+          rejectUnauthorized: false
      }
 });
 
