@@ -66,12 +66,13 @@ const ManageUsers = () => {
   return (
      <DashboardLayout activeMenu="Team Members">
             <div className='mt-2 mb-10 '>
-              <div className='flex md:flex-row md:items-center justify-between '>
+              <div className='flex flex-row items-center justify-between gap-3'>
                 <h2 className='text-xl md:text-xl font-medium'>Team Members</h2>
 
-                <button className='flex md:flex download-btn' onClick={handleDownloadReport}>
+                <button className='flex items-center gap-2 download-btn shrink-0 whitespace-nowrap' onClick={handleDownloadReport}>
                   <LuFileSpreadsheet className='text-lg'/>
-                  Download Report
+                  <span className='hidden sm:inline'>Download Report</span>
+                  <span className='sm:hidden'>Export</span>
                 </button>
               </div>
 

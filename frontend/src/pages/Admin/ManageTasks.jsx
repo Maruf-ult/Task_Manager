@@ -84,11 +84,12 @@ const ManageTasks = () => {
             <h2 className="text-xl md:text-xl font-medium">My Tasks</h2>
 
             <button
-              className="flex lg:hidden download-btn"
+              className="flex lg:hidden items-center gap-2 download-btn shrink-0 whitespace-nowrap"
               onClick={handleDownloadReport}
             >
               <LuFileSpreadsheet className="text-lg" />
-              Download Report
+              <span className="hidden sm:inline">Download Report</span>
+              <span className="sm:hidden">Export</span>
             </button>
           </div>
 

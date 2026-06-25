@@ -138,8 +138,8 @@ function Dashboard() {
       <div className="card -mt-5">
         <div>
           <div className="col-span-3">
-            <h2 className="text-xl md:text-2xl">Good Morning! {user?.name}</h2>
-            <p className="text-x5 md:text-[13px] text-gray-400 mt-1.5  ">
+            <h2 className="text-xl md:text-2xl truncate">Good Morning! {user?.name}</h2>
+            <p className="text-xs md:text-[13px] text-gray-400 mt-1.5  ">
               {moment().format("dddd Do MMM YYYY")}
             </p>
           </div>
