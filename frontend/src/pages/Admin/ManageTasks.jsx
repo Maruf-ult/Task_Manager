@@ -79,7 +79,7 @@ const ManageTasks = () => {
   return (
     <DashboardLayout activeMenu="Manage Tasks">
       <div className="-mt-2">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between ">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-xl md:text-xl font-medium">My Tasks</h2>
 
@@ -93,7 +93,7 @@ const ManageTasks = () => {
           </div>
 
           {tabs?.[0]?.count > 0 && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               <TaskStatusTabs
                 tabs={tabs}
                 activeTab={filterStatus}

@@ -91,11 +91,11 @@ const ResetPass = () => {
         className="absolute left-5  sm:left-20 top-5 w-28 sm:w-32 cursor-pointer"
       />
 
-      <h1 className="absolute right-5 sm:right-20 top-5 font-bold text-4xl">Task Manager</h1>
+      <h1 className="absolute right-5 sm:right-20 top-6 font-bold text-lg sm:text-4xl">Task Manager</h1>
 
 
   {!isEmailSent && (
-        <form onSubmit={onSubmitEmail} className="bg-white p-8 rounded-lg shadow-lg w-96 text-sm">
+        <form onSubmit={onSubmitEmail} className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-sm text-sm">
           <h1 className="text-black text-2xl font-semibold text-center mb-4">Email Verify OTP</h1>
           <p className="text-center mb-6 text-gray-600">Enter your registered email address</p>
           <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-200">
@@ -115,15 +115,15 @@ const ResetPass = () => {
       )}
 
       {!isOtpSubmitted && isEmailSent && (
-        <form onSubmit={onSubmitOtp} className="bg-white p-8 rounded-lg shadow-lg w-96 text-sm">
+        <form onSubmit={onSubmitOtp} className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-sm text-sm">
           <h1 className="text-black text-2xl font-semibold text-center mb-4">Reset Password OTP</h1>
           <p className="text-center mb-6 text-gray-600">Enter the 6-digit code sent to your email.</p>
-          <div className="flex justify-between mb-8">
+          <div className="flex justify-center gap-2 mb-8">
             {Array(6)
               .fill(0)
               .map((_, index) => (
                 <input
-                  className="w-12 h-12 bg-gray-200 text-black text-center text-xl rounded-md border border-gray-300"
+                  className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 text-black text-center text-xl rounded-md border border-gray-300"
                   type="text"
                   maxLength="1"
                   key={index}
@@ -145,7 +145,7 @@ const ResetPass = () => {
       )}
 
       {isOtpSubmitted && isEmailSent && (
-        <form onSubmit={onSubmitNewPassword} className="bg-white p-8 rounded-lg shadow-lg w-96 text-sm">
+        <form onSubmit={onSubmitNewPassword} className="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-sm text-sm">
           <h1 className="text-black text-2xl font-semibold text-center mb-4">New Password</h1>
           <p className="text-center mb-6 text-gray-600">Enter the new password below</p>
           <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-200">

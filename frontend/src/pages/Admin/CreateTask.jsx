@@ -212,7 +212,7 @@ console.log(taskData)
     <DashboardLayout activeMenu="Create Tasks">
       <div className="-mt-2">
         <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
-          <div className="from-card col-span-3">
+          <div className="form-card col-span-3">
             <div className="flex items-center justify-between">
               <h2 className="text-xl md:text-xl font-medium">
                 {taskId ? "Update Task" : "Create Task"}

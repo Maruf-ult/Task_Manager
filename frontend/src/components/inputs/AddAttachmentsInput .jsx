@@ -24,9 +24,9 @@ const AddAttachmentsInput = ({ attachments, setAttachments }) => {
           key={item}
           className="flex justify-between bg-gray-50 border border-gray-100 px-3 py-2 rounded-md mb-3 mt-2 "
         >
-          <div className="flex-1 flex items-center gap-3 border border-gray-100">
-            <LuPaperclip className="text-gray-400" />
-            <p className="text-xs text-black">{item}</p>
+          <div className="flex-1 min-w-0 flex items-center gap-3">
+            <LuPaperclip className="text-gray-400 shrink-0" />
+            <p className="text-xs text-black truncate">{item}</p>
           </div>
 
           <button
