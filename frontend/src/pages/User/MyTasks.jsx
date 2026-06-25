@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import TaskCard from "../../components/Cards/TaskCard";
+import TaskCardSkeleton from "../../components/Cards/TaskCardSkeleton";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import TaskStatusTabs from "../../components/layouts/TaskStatusTabs ";
 import { API_PATHS } from "../../utils/apiPaths";
