@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import TaskCard from "../../components/Cards/TaskCard";
+import LoadingGrid from "../../components/loading/LoadingGrid";
+import TaskCardSkeleton from "../../components/loading/TaskCardSkeleton";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import TaskStatusTabs from "../../components/layouts/TaskStatusTabs ";
 import { API_PATHS } from "../../utils/apiPaths";
@@ -60,55 +62,66 @@ const MyTasks = () => {
 
   return (
     <DashboardLayout activeMenu="My Tasks">
-      <div className="-mt-2">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between ">
+  <div className="-mt-2">
 
-            <h2 className="text-xl md:text-xl font-medium">My Tasks</h2>
+    {/* Header */}
+    <div className="mb-6 mt-2">
+      <h2 className="text-2xl font-semibold text-gray-900">
+        My Tasks
+      </h2>
+    </div>
 
-
-
-          {tabs?.[0]?.count > 0 && (
-
-              <TaskStatusTabs
-                tabs={tabs}
-                activeTab={filterStatus}
-                setActiveTab={setFilterStatus}
-              />
-
-          )}
-        </div>
-
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-          </div>
-        ) : allTasks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 ">
-            {allTasks?.map((item, index) => (
-              <TaskCard
-                key={item._id}
-                title={item.title}
-                description={item.description}
-                priority={item.priority}
-                status={item.status}
-                progress={item.progress}
-                createdAt={item.createdAt}
-                dueDate={item.dueDate}
-                assignedTo={item.assignedTo?.map((user) => user.profileImageUrl)}
-                attachmentCount={item.attachments?.length || 0}
-                completedTodoCount={item.completedTodoCount || 0}
-                todoCheckList={item.todoCheckList || []}
-                onClick={() => handleClick(item._id)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex justify-center items-center h-64">
-            <p className="text-gray-500 text-lg">No tasks found</p>
-          </div>
-        )}
+    {/* Status Tabs */}
+    {tabs?.[0]?.count > 0 && (
+      <div className="mb-6">
+        <TaskStatusTabs
+          tabs={tabs}
+          activeTab={filterStatus}
+          setActiveTab={setFilterStatus}
+        />
       </div>
-    </DashboardLayout>
+    )}
+
+    {/* Tasks */}
+    {isLoading ? (
+      <LoadingGrid SkeletonComponent={TaskCardSkeleton} count={6} />
+    ) : allTasks.length > 0 ? (
+      <div
+        className="grid gap-6"
+        style={{
+          gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
+        }}
+      >
+        {allTasks.map((item) => (
+          <TaskCard
+            key={item._id}
+            title={item.title}
+            description={item.description}
+            priority={item.priority}
+            status={item.status}
+            progress={item.progress}
+            createdAt={item.createdAt}
+            dueDate={item.dueDate}
+            assignedTo={item.assignedTo?.map(
+              (user) => user.profileImageUrl
+            )}
+            attachmentCount={item.attachments?.length || 0}
+            completedTodoCount={item.completedTodoCount || 0}
+            todoCheckList={item.todoCheckList || []}
+            onClick={() => handleClick(item._id)}
+          />
+        ))}
+      </div>
+    ) : (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-gray-500 text-lg">
+          No tasks found
+        </p>
+      </div>
+    )}
+
+  </div>
+</DashboardLayout>
   );
 };
 

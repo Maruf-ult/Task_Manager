@@ -13,6 +13,8 @@ import { PRIORITY_DATA } from "../../utils/data";
 import moment from "moment";
 import Modal from "../../components/layouts/Modal";
 import DeleteAlert from "../../components/layouts/DeleteAlert ";
+import PageSpinner from "../../components/loading/PageSpinner";
+import TaskDetailsSkeleton from "../../components/loading/TaskDetailsSkeleton";
 
 const CreateTask = () => {
   const location = useLocation();
@@ -33,6 +35,7 @@ const CreateTask = () => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(!!taskId);
 
   const [openDeleteAlert, setOpenDeleteAlert] = useState(false);
 
@@ -157,6 +160,7 @@ const CreateTask = () => {
 
   const getTaskDetailsByID = async () => {
     try {
+      setIsFetching(true);
       const response = await axiosInstance.get(API_PATHS.TASKS.GET_TASK_BY_ID(taskId));
        
      if(response.data){
@@ -179,6 +183,8 @@ const CreateTask = () => {
     } catch (error) {
        console.log("Error fetching users",error);
        toast.error("Failed to load task information. Please try again.");
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -211,10 +217,20 @@ console.log(taskData)
   return (
     <DashboardLayout activeMenu="Create Tasks">
       <div className="-mt-2">
+        {isFetching ? (
+          <div className="relative">
+            <div className="absolute inset-0 flex justify-center items-center z-10 pointer-events-none min-h-96">
+              <PageSpinner />
+            </div>
+            <div className="opacity-50">
+              <TaskDetailsSkeleton />
+            </div>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
-          <div className="from-card col-span-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl md:text-xl font-medium">
+          <div className="form-card col-span-1 md:col-span-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <h2 className="text-lg sm:text-xl font-medium">
                 {taskId ? "Update Task" : "Create Task"}
               </h2>
 
@@ -341,6 +357,7 @@ console.log(taskData)
             </div>
           </div>
         </div>
+        )}
       </div>
 
 

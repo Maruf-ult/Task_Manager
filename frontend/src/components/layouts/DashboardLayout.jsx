@@ -15,15 +15,15 @@ const DashboardLayout = ({children,activeMenu}) => {
   }, [location.pathname, pageLoading, setPageLoading]);
 
      return (
-      <div className=''>
+      <div className='min-h-screen'>
                 <Navbar activeMenu={activeMenu}/>
                 {user && (
                      <div className='flex'>
-                         <div className='max-[1080px]:hidden'>
+                         <div className='hidden lg:block shrink-0'>
                               <SideMenu activeMenu={activeMenu}/>
                          </div>
 
-                         <div className='grow mx-5'>{children}</div>
+                         <div className='grow w-full min-w-0 px-3 sm:px-4 md:px-5 pb-6'>{children}</div>
                      </div>
                 ) }
 

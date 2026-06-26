@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { LuFileSpreadsheet } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import TaskCard from "../../components/Cards/TaskCard";
+import LoadingGrid from "../../components/loading/LoadingGrid";
+import TaskCardSkeleton from "../../components/loading/TaskCardSkeleton";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import TaskStatusTabs from "../../components/layouts/TaskStatusTabs ";
 import { API_PATHS } from "../../utils/apiPaths";
@@ -79,9 +81,9 @@ const ManageTasks = () => {
   return (
     <DashboardLayout activeMenu="Manage Tasks">
       <div className="-mt-2">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between ">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-xl md:text-xl font-medium">My Tasks</h2>
+            <h2 className="text-lg sm:text-xl font-medium">Manage Tasks</h2>
 
             <button
               className="flex lg:hidden download-btn"
@@ -93,7 +95,7 @@ const ManageTasks = () => {
           </div>
 
           {tabs?.[0]?.count > 0 && (
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full lg:w-auto">
               <TaskStatusTabs
                 tabs={tabs}
                 activeTab={filterStatus}
@@ -112,11 +114,9 @@ const ManageTasks = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-          </div>
+          <LoadingGrid SkeletonComponent={TaskCardSkeleton} count={6} />
         ) : allTasks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 ">
             {allTasks?.map((item, index) => (
               <TaskCard
                 key={item._id}

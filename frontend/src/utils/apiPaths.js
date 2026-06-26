@@ -1,6 +1,6 @@
 
-// export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-export const BASE_URL = "https://task-manager-backend-bay-phi.vercel.app";
+export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 
 export const API_PATHS = {
      AUTH:{

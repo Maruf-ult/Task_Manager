@@ -101,14 +101,14 @@ const handleLogin = async (e) => {
           <button type="submit" className="btn-primary">
             LOGIN
           </button>
-          <div className="flex gap-x-30">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-x-8">
           <p className="text-[13px] text-slate-800 mt-3">
             Dont have an account?{" "}
             <Link className="font-medium text-primary underline" to="/signup">
               SignUp
             </Link>
           </p>
-           <p className="text-[13px] text-slate-800 mt-3">
+           <p className="text-[13px] text-slate-800 mt-3 sm:mt-3">
             Forgot Password?{" "}
             <Link className="font-medium text-primary underline" to="/reset-pass">
               Reset Pass

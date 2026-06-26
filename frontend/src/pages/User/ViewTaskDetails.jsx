@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 import { LuSquareArrowOutUpRight, LuFileText, LuImage, LuLink } from "react-icons/lu";
 import { useParams } from "react-router-dom";
 import AvatarGroup from "../../components/layouts/AvatarGroup";
+import PageSpinner from "../../components/loading/PageSpinner";
+import TaskDetailsSkeleton from "../../components/loading/TaskDetailsSkeleton";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import { API_PATHS } from "../../utils/apiPaths";
 import axiosInstance from "../../utils/axiosInstance";
@@ -107,21 +109,26 @@ const updateTodoChecklist = async (index) => {
     <DashboardLayout activeMenu="My Tasks">
       <div className="mt-5">
         {isLoading ? (
-          <div className="flex justify-center items-center h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+          <div className="relative">
+            <div className="absolute inset-0 flex justify-center items-center z-10 pointer-events-none min-h-96">
+              <PageSpinner />
+            </div>
+            <div className="opacity-50">
+              <TaskDetailsSkeleton />
+            </div>
           </div>
         ) : task ? (
           <div className="grid grid-cols-1 md:grid-cols-4 mt-4">
             <div className="form-card col-span-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm md:text-xl font-medium">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <h2 className="text-sm sm:text-base md:text-xl font-medium line-clamp-2 flex-1 min-w-0">
                   {task?.title}
                 </h2>
 
                 <div
-                  className={`text-[11px] md:text-[13px] font-medium ${getStatusTagColor(
+                  className={`text-[11px] md:text-[13px] font-medium shrink-0 ${getStatusTagColor(
                     task?.status
-                  )} px-4 py-0.5 rounded`}
+                  )} px-4 py-0.5 rounded self-start`}
                 >
                   {task?.status}
                 </div>

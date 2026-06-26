@@ -45,7 +45,7 @@ const TaskCard = ({
 
   return (
     <div
-      className="bg-white rounded-xl py-4 shadow-md shadow-gray-100 border border-gray-200/50 cursor-pointer "
+      className="bg-white rounded-xl py-4 border border-gray-200 shadow-[0_2px_12px_rgba(15,23,42,0.08)] hover:shadow-[0_4px_18px_rgba(15,23,42,0.12)] hover:border-gray-300 transition-all duration-200 cursor-pointer overflow-hidden"
       onClick={onClick}
     >
       <div className="flex items-end gap-3 px-4">
