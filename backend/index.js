@@ -1,5 +1,8 @@
 console.log("📍 START");
 
+import './config/env.js'
+console.log("env imported");
+
 import express from 'express'
 console.log("📍 express imported");
 
@@ -12,8 +15,6 @@ console.log("📍 path imported");
 import { fileURLToPath } from 'url'
 console.log("📍 fileURLToPath imported");
 
-import dotenv from 'dotenv'
-console.log("📍 dotenv imported");
 
 import { connectDB } from './config/db.js'
 console.log("📍 connectDB imported");
@@ -36,8 +37,6 @@ console.log("📍 errorHandler imported");
 console.log("📍 Creating express app");
 const app = express();
 
-console.log("📍 Loading dotenv");
-dotenv.config();
 
 console.log("📍 Setting up CORS");
 app.use(cors({
